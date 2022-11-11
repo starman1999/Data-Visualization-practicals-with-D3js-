@@ -1,0 +1,101 @@
+<html>
+  <head>
+  </head>
+  <body>
+    <script src="../../d3.v3.min.js" charset="utf-8"></script>
+    <script src="../../topojson.v1.min.js"></script>
+	
+	<script>
+	
+var width = 900,
+  height = 600;
+
+dataset = []
+var svg = d3.select('body').append('svg')
+           .attr('width', width)
+           .attr('height', height)
+           .style('background-color', 'gray');
+
+var projection = d3.geo.mercator() 
+          .center([3.0, 30.279229]) // On centre la carte sur la France
+          .scale(1500)
+  
+
+var path =  d3.geo.path().projection(projection);
+
+	d3.json('algeriaRM.json', function(err, data) {
+    
+    processData(data)
+    var X = topojson.feature(data, data.objects.dz);
+    console.log(X.features)
+  
+    
+    svg.selectAll('path')
+         .data(X.features)
+         .enter()
+         .append('path')
+         .attr('d', path)
+         .each((d,i)=> {centroid = path.centroid(d.geometry);})
+         .style('fill', function(d,i){
+           let centroid = path.centroid(d.geometry);
+           if((centroid[0]< width/2) && (centroid[1]< height/2)) { return 'lightblue'}
+           if((centroid[0]> width/2) && (centroid[1]< height/2)) { return 'rosybrown'}
+           if((centroid[0]> width/2) && (centroid[1]> height/2)) { return 'coral'}
+           if((centroid[0]< width/2) && (centroid[1]> height/2)) { return 'tan'}
+              
+             })
+          .text('uf2b9') //Colorier les wilayas selon leurs positions : est-ouest-nord, sud.
+          //console.log(data.objects.dz.geometries[i].properties.VARNAME_1);
+         .style('stroke-width', '1.5px');
+
+
+    var color = ["blue", "red", "orange", "Aqua", "DeepPink", "blue", "red", "blue", "red", "orange", "Aqua", "DeepPink"]
+
+
+    svg.selectAll("circle")
+         .data(dataset)
+         .enter()
+         .append("circle")
+         .attr('r', 1)
+         .attr('cx', function(d){return projection([d[0], d[1]])[0];})
+         .attr('cy', function(d){return projection([d[0], d[1]])[1];})
+
+         .attr('fill',  (d,i)=> color[d[2]%4]);
+
+		 
+  });
+  function processData(data){ //append points to form multiple arcs
+
+    scale_points = data.transform.scale
+    translate_points = data.transform.translate
+    arcs = data.arcs
+    
+
+    //console.log(arcs)
+    
+
+    for( let i=0; i< arcs.length; i++){
+      //console.log("i",i)
+      arc = arcs[i]
+
+      x = arc[0][0] //first coordinates in each arc are treated seperately
+      y = arc[0][1]
+      dataset.push([(scale_points[0] * x) + translate_points[0], (scale_points[1] * y) + translate_points[1],i])
+      //console.log(x,y)
+
+      for( let j=1; j< arc.length; j++){
+        x += arc[j][0]
+        y += arc[j][1]
+        dataset.push([(scale_points[0] * x) + translate_points[0], (scale_points[1] * y) + translate_points[1],i])
+      }
+    }
+
+    //console.log(dataset)
+  
+    
+    
+  }
+
+	</script>
+  </body>
+</html>

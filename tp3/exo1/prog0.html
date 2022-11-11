@@ -1,0 +1,96 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Map visualization with D3js</title>
+    <script type="text/javascript" src="../d3.v3.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+            background-color: whitesmoke;
+            font-family: 'Times New Roman', sans-serif;
+            font-weight: 300;
+        }
+
+        #svgcontainer {
+            width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 50px;
+            padding: 5px 50px 10px 50px;
+            background-color: whitesmoke;
+        }
+        svg {
+            background-color: whitesmoke;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="svgcontainer">
+    <div id="svganchor"></div>
+    </div>
+    <script type="text/javascript">
+
+        //Width and height
+        let w = 800;
+        let h = 600;
+
+        //Define map projection
+        let projection = d3.geo.mercator()
+            .center([132, -28])
+            .translate([w / 2, h / 2])
+            .scale(4000);
+
+
+        //Define path generator
+        let path = d3.geo.path()
+            .projection(projection);
+
+        let color = d3.scale.ordinal()
+            .range(['Azure','red','green','blue','gray','white', 'magenta']);
+
+        //Create SVG
+        let svg = d3.select("#svganchor")
+            .append("svg")
+            .attr("width", w)
+            .attr("height", h);
+
+        //Load in GeoJSON data
+        d3.json("aust.json", (json) => {
+
+
+            //Binding data and creating one path per GeoJSON feature
+            svg.selectAll("path")
+                //Joins data to the selected elements
+                .data(json.features)
+                //enter() Creates a selection with placeholder references for missing elements
+                .enter()
+                .append("path")
+                .attr("d", path)
+                .attr("stroke", "gray")
+                .attr("fill", (d, i) => { return color(i) });
+
+            //States
+            svg.selectAll("text")
+                .data(json.features)
+                .enter()
+                .append("text")
+                .style("font", "12px times")
+                .attr("fill", "darkslategray")
+                .attr("transform", (d) => { return "translate(" + path.centroid(d) + ")"; })
+                .attr("text-anchor", "end")
+                .text((d) => {
+                    return d.properties.STATE_NAME;
+                });
+
+        });
+
+
+
+    </script>
+</body>
+
+</html>
