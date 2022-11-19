@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title> USTHB MAP</title>
+		<script type="text/javascript" src="../../d3.v3.js"></script>
+		<link rel="stylesheet" href="StyleUsthb.css">
+		
+	</head>
+	<body style="background-color: #071426;">
+		<script type="text/javascript">
+			//Width and height
+			var w = 1300;
+			var h = 600;
+
+			//Define map projection
+			var proj = d3.geo.mercator()
+								   .translate([0,0])
+								   .scale([1]);
+
+			//Define path generator
+			var path = d3.geo.path()
+							 .projection(proj);
+							 
+			
+			d3.select("body")
+			.append("text")
+			.text("Université des Sciences et Techniques Houari Boumediene")
+			.attr("font-size","305px")
+			.attr('class', 'title')
+
+
+			var svg = d3.select("body")
+						.append("svg")
+						.attr("width", w)
+						.attr("height", h)
+						.attr('transform','rotate(39,0,0) ');
+
+
+		d3.json("usthbBrut2.geojson", function(json) {
+	
+
+            var b = path.bounds(json);
+            console.log(b);
+               s = .99 / Math.max( (b[1][0] - b[0][0]) / w , (b[1][1] - b[0][1]) / h ); 
+               t = [ (w - s * (b[1][0] +b[0][0])) / 2 , (h - s * (b[1][1]+b[0][1])) / 2 ];
+               console.log(s,t);
+            proj.translate(t).scale(s);
+
+					
+
+					var map = svg.selectAll("path")
+					   .data(json.features)           
+             		   .enter()
+					   .append("path")
+					   .attr("d", path)
+					   .attr("fill" ,d =>{
+						   if(d['properties'].name == "ground"){
+							return "#3E768C"
+						   }else{
+							return "#B3E0F2"
+						   }
+					   } )
+					   .on("mouseover", function(d){
+						   console.log(d['properties'].name)
+						   if(d['properties'].name != "ground"){
+							d3.select(this)
+							 .attr("fill", "#79BED9")
+							 .attr("stroke", "yellow")
+							 .style('stroke-width', '2px');
+						   }
+						   
+						})
+						.on("mouseout", function(d){
+
+							 if(d['properties'].name != "ground"){
+								d3.select(this)
+								.attr("fill", "#B3E0F1")
+								.style('stroke-width', '0px');;
+							 }
+							 
+							
+						})
+					
+						});
+		</script>
+	</body>
+</html>
