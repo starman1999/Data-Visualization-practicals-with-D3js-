@@ -79,7 +79,7 @@ const render = data => {
 
 let p = new Promise ((resolve, reject) =>{ //Promises are asynchronous, they are good to fetch data that takesl long time
 
-    csv('data/countries_population.csv', data => {
+    csv('../data/countries_population.csv', data => {
         if(data != null){
             data.forEach(d => {
                 d.population = +d.population *1000;

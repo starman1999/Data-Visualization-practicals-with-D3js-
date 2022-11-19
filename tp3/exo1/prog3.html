@@ -34,9 +34,11 @@
 						.append("svg")
 						.attr("width", w)
 						.attr("height", h);
+						//.attr('transform','rotate(40,0,0) ');
 
 
 		d3.json("usthbBrut2.geojson", function(json) {
+			
             var b = path.bounds(json);
             console.log(b);
                s = .99 / Math.max( (b[1][0] - b[0][0]) / w , (b[1][1] - b[0][1]) / h ); 
@@ -48,7 +50,7 @@
 					.text("Université des Sciences et Techniques Houari Boumediene")
 					.attr("x","25")
 					.attr("y","20")
-					.attr("font-size","25px");
+					.attr("font-size","23px");
 
 					var map = svg.selectAll("path")
 					   .data(json.features);             

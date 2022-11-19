@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8">
     <title>Map visualization with D3js</title>
-    <script type="text/javascript" src="../d3.v3.js"></script>
+    <script type="text/javascript" src="../../d3.v3.js"></script>
     <style type="text/css">
         body {
             margin: 0;
@@ -60,7 +60,7 @@
 
         //Load in GeoJSON data
         d3.json("aust.json", (json) => {
-
+        console.log(projection([10, 15]));
 
             //Binding data and creating one path per GeoJSON feature
             svg.selectAll("path")
@@ -71,7 +71,12 @@
                 .append("path")
                 .attr("d", path)
                 .attr("stroke", "gray")
-                .attr("fill", (d, i) => { return color(i) });
+                .on("mouseover", function(){
+                    d3.select(this).attr("fill", "red");
+                })
+                .on("mouseout", function(){
+                    d3.select(this).attr("fill", "blue");
+                })
 
             //States
             svg.selectAll("text")
