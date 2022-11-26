@@ -2,87 +2,69 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title> USTHB MAP</title>
+		<title> USTHB MAP</title>  
 		<script type="text/javascript" src="../../d3.v3.js"></script>
+		<script type="text/javascript" src="../../d3.v4.min.js"></script>
 		<link rel="stylesheet" href="StyleUsthb.css">
 		
 	</head>
 	<body style="background-color: #071426;">
-		<script type="text/javascript">
-			//Width and height
-			var w = 1300;
-			var h = 600;
+		<script type="text/javascript" src="usthb.js"></script>	</body>
 
-			//Define map projection
-			var proj = d3.geo.mercator()
-								   .translate([0,0])
-								   .scale([1]);
+		
+		<h3 class="title"> "Université des Sciences et Techniques Houari Boumediene" </h3>
 
-			//Define path generator
-			var path = d3.geo.path()
-							 .projection(proj);
-							 
+		<section class="section">
+
+			<div id="basicZoom" class="map">
+				<svg id="svg"></svg>
+				
+			</div>
 			
-			d3.select("body")
-			.append("text")
-			.text("Université des Sciences et Techniques Houari Boumediene")
-			.attr("font-size","305px")
-			.attr('class', 'title')
+
+			<div class="menu">
+
+			
+				<div class="infos"> 
+					<button id="resetButton"> reset zoom </button>
+				</div>
+
+				<div class="controls">
+					<h3 class="text"> l’occupation des salles par les étudiants IV :</h3>
+					
+					
+					
+					<div class="btn-group ">
+						<h3 class="text"> Master 1 </h3>
+						<button class="btn"> M1 </button>
+						<button class="btn"> M2 </button>
+					</div>
 
 
-			var svg = d3.select("body")
-						.append("svg")
-						.attr("width", w)
-						.attr("height", h)
-						.attr('transform','rotate(39,0,0) ');
+					<div class="btn-group ">
+						<h3 class="text"> Semestre 2 </h3>
+						<button class="btn"> S1 </button>
+						<button class="btn"> S2 </button>
+					</div>
+
+					<div class="btn-group ">
+						<h3 class="text"> Dimanche </h3>
+						<button class="btn"> Samedi </button>
+						<button class="btn"> Dimanche </button>
+						<button class="btn"> Lundi </button>
+						<button class="btn"> Mardi </button>
+						<button class="btn"> Mercredi </button>
+						<button class="btn"> Jeudi </button>
+					</div>
 
 
-		d3.json("usthbBrut2.geojson", function(json) {
+
+
+				</div>
+
+			</div>
+			 
+
+		</section>
 	
-
-            var b = path.bounds(json);
-            console.log(b);
-               s = .99 / Math.max( (b[1][0] - b[0][0]) / w , (b[1][1] - b[0][1]) / h ); 
-               t = [ (w - s * (b[1][0] +b[0][0])) / 2 , (h - s * (b[1][1]+b[0][1])) / 2 ];
-               console.log(s,t);
-            proj.translate(t).scale(s);
-
-					
-
-					var map = svg.selectAll("path")
-					   .data(json.features)           
-             		   .enter()
-					   .append("path")
-					   .attr("d", path)
-					   .attr("fill" ,d =>{
-						   if(d['properties'].name == "ground"){
-							return "#3E768C"
-						   }else{
-							return "#B3E0F2"
-						   }
-					   } )
-					   .on("mouseover", function(d){
-						   console.log(d['properties'].name)
-						   if(d['properties'].name != "ground"){
-							d3.select(this)
-							 .attr("fill", "#79BED9")
-							 .attr("stroke", "yellow")
-							 .style('stroke-width', '2px');
-						   }
-						   
-						})
-						.on("mouseout", function(d){
-
-							 if(d['properties'].name != "ground"){
-								d3.select(this)
-								.attr("fill", "#B3E0F1")
-								.style('stroke-width', '0px');;
-							 }
-							 
-							
-						})
-					
-						});
-		</script>
-	</body>
 </html>
